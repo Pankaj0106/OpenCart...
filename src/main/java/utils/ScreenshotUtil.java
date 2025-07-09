@@ -1,29 +1,40 @@
-// utils/ScreenshotUtil.java
 package utils;
 
+import base.BaseClass;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import base.BaseClass;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.*;
-
 public class ScreenshotUtil {
 
-    public static void captureScreenshot(String namePrefix) {
-        TakesScreenshot ts = (TakesScreenshot) BaseClass.driver;
-        File source = ts.getScreenshotAs(OutputType.FILE);
+    public static void captureScreenshot(String scenarioName) {
+        WebDriver driver = BaseClass.driver;
 
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String path = "screenshots/" + namePrefix + "_" + timestamp + ".png";
+        if (driver == null) {
+            System.out.println("Driver is null. Cannot take screenshot.");
+            return;
+        }
 
         try {
-            FileUtils.copyFile(source, new File(path));
-            System.out.println("Screenshot saved at: " + path);
-        } catch (IOException e) {
-            System.out.println("Failed to save screenshot: " + e.getMessage());
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            byte[] screenshot = ts.getScreenshotAs(OutputType.BYTES);
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = "screenshots/" + scenarioName + "_" + timeStamp + ".png";
+
+            Files.createDirectories(Paths.get("screenshots"));
+            Files.write(Paths.get(fileName), screenshot);
+
+            System.out.println("Screenshot captured: " + fileName);
+
+        } catch (Exception e) {
+            System.out.println("Failed to capture screenshot: " + e.getMessage());
         }
     }
 }
