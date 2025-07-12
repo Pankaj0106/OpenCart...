@@ -1,6 +1,8 @@
 // selenium/Hooks.java
 package selenium;
 
+import java.io.File;
+
 import base.BaseClass;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -11,6 +13,10 @@ public class Hooks {
 
     @Before
     public void setup() {
+        File logFile = new File("target/logs/test-execution.log");
+        if (logFile.exists()) {
+            logFile.delete();
+        }
         BaseClass.initDriver();
     }
 
@@ -21,4 +27,5 @@ public class Hooks {
         }
         BaseClass.quitDriver();
     }
+    
 }

@@ -8,6 +8,10 @@ import utils.ConfigReader;
 
 public class BaseClass {
     public static WebDriver driver;
+    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+    static {
+        System.setProperty("log4j.configurationFile", "src/test/java/resources/log4j2.xml");
+    }
 
     public static WebDriver initDriver() {
         ConfigReader.loadConfig();
@@ -36,6 +40,7 @@ public class BaseClass {
     public static void quitDriver() {
         if (driver != null) {
             driver.quit();
+            tlDriver.remove();
         }
     }
 }
